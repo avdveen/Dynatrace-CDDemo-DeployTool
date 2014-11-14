@@ -1,0 +1,60 @@
+---
+- name: Delete home dir for symlink of tomcat
+  shell: rm -fr /usr/share/tomcat{{ tomcat_suffix }}
+  sudo: yes
+  
+- name: Delete existing installation at {{ tomcat_install_dir }}
+  shell: rm -rf {{ tomcat_install_dir }}
+  sudo: yes
+
+- name: Download Tomcat
+  copy: src=apache-tomcat-7.tar.gz dest=/tmp/apache-tomcat-7.tar.gz
+
+- name: Create directories in /opt for Tomcat{{ tomcat_suffix }}
+  file: path={{ tomcat_install_dir }} state=directory
+  sudo: yes
+
+- name: Create directories in /opt for Tomcat{{ tomcat_suffix }}
+  file: path=/tmp/apache-tomcat{{ tomcat_suffix }} state=directory  
+  sudo: yes
+  
+- name: Extract archive for Tomcat{{ tomcat_suffix }} to /tmp
+  unarchive: src=/tmp/apache-tomcat-7.tar.gz dest=/tmp
+  sudo: yes
+  
+- name: Move extracted Tomcat files to /opt
+  shell: "mv -f /tmp/apache-tomcat-7*/* {{ tomcat_install_dir }}"
+  sudo: yes
+  
+- name: Symlink install directories
+  file: src={{ tomcat_install_dir }} path=/usr/share/tomcat{{ tomcat_suffix }} state=link
+  sudo: yes
+
+- name: Configure Tomcat {{ tomcat_suffix }} server
+  template: src=server.xml.j2 dest={{ tomcat_install_dir }}/conf/server.xml
+  sudo: yes
+  
+- name: Configure Tomcat users
+  template: src=tomcat-users.xml.j2 dest=/usr/share/tomcat{{ tomcat_suffix }}/conf/tomcat-users.xml
+  sudo: yes
+
+- name: Install Tomcat init script
+  template: src=tomcat-initscript.sh.j2 dest=/etc/init.d/tomcat{{ tomcat_suffix }} mode=0755
+  sudo: yes
+
+- name: Change ownership of Tomcat installation
+  file: path={{ tomcat_install_dir }} owner={{ tomcat_user }} group={{ tomcat_user }} state=directory recurse=yes
+  sudo: yes
+  
+- name: Change ownership of Tomcat installation in /usr/share/tomcat{{ tomcat_suffix }}
+  file: path=/usr/share/tomcat{{ tomcat_suffix }} owner={{ tomcat_user }} group={{ tomcat_user }} state=directory recurse=yes
+  sudo: yes
+
+- name: Start Tomcat{{ tomcat_suffix }}
+  #service: name=tomcat{{ tomcat_suffix }} state=started enabled=yes
+  shell: insserv tomcat{{ tomcat_suffix }} && /etc/init.d/tomcat{{ tomcat_suffix }} start
+  sudo: yes
+
+- name: Wait for tomcat to start
+  wait_for: port={{ tomcat_http_port }}
+  sudo: yes

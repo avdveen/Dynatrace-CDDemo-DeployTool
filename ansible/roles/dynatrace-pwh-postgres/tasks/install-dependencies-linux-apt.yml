@@ -1,0 +1,20 @@
+---
+- name: Install APT key for postgresql.org repository
+  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+  sudo: yes
+
+- name: Add the APT repostory at postgresql.org
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main' state=present
+  sudo: yes
+
+- name: Update APT cache
+  apt: update_cache=yes
+  sudo: yes
+
+- name: Install package 'postgresql'
+  apt: name=postgresql state=latest
+  sudo: yes
+  
+- name: Install package 'xmlstarlet'
+  apt: pkg=xmlstarlet state=present
+  sudo: yes

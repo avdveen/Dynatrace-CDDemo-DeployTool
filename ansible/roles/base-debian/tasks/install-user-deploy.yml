@@ -1,0 +1,21 @@
+---
+- name: Create group 'deploy'
+  group: name=deploy state=present
+  sudo: yes
+
+- name: Create user 'deploy' in group 'deploy'
+  user: name=deploy group=deploy shell=/bin/bash
+  sudo: yes
+
+- name: Set password for user 'deploy'
+  shell: echo 'deploy:deploy' | chpasswd
+  sudo: yes
+
+- name: Add user 'deploy' to sudoers
+  lineinfile: "dest=/etc/sudoers.d/deploy regexp='^deploy' line='deploy ALL=(ALL) NOPASSWD: ALL' create=yes"
+  sudo: yes
+
+- name: Add SSH public key to user 'deploy'
+  authorized_key: user=deploy key="{{ user_deploy_pubkey | mandatory }}"
+  when: user_dynatrace_pubkey is defined
+  sudo: yes

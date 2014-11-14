@@ -1,0 +1,5 @@
+---
+- name: Deploy Jenkins configuration to /etc/default/jenkins
+  template: src=jenkins.j2 dest=/etc/default/jenkins
+  sudo: yes
+ 

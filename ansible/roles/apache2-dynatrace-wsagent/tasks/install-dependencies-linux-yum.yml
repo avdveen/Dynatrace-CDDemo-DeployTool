@@ -1,0 +1,4 @@
+---
+- name: Install package 'apache2'
+  yum: pkg=apache2 state=present
+  sudo: yes

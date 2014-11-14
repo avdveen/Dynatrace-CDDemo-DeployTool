@@ -1,0 +1,72 @@
+- name: Clean up udev rules in /etc/udev/rules.d # see: http://6.ptmc.org/?p=164
+  shell: rm -rf /etc/udev/rules.d/70-persistent-net.rules
+  sudo: yes
+
+- name: Clean up udev rules in /etc/udev/rules.d, pt.2
+  shell: mkdir /etc/udev/rules.d/70-persistent-net.rules
+  sudo: yes
+
+- name: Clean up udev rules in /etc/udev/rules.d, pt.3
+  shell: rm -rf /dev/.udev/
+  sudo: yes
+
+- name: Clean up udev rules in /etc/udev/rules.d, pt.4
+  shell: rm -rf /lib/udev/rules.d/75-persistent-net-generator.rules
+  sudo: yes
+
+- name: Clean up DHCP leases in /var/lib/dhcp
+  shell: rm -rf /var/lib/dhcp/*
+  sudo: yes
+
+#- name: Clean up SSH host key pairs
+#  shell: rm -rf /etc/ssh/*host*
+#  ignore_errors: yes
+#  sudo: yes
+
+- name: Remove package 'build-essential'
+  apt: name=build-essential state=absent
+  sudo: yes
+
+- name: Remove package 'linux-headers-amd64'
+  apt: name=linux-headers-amd64 state=absent
+  sudo: yes
+
+- name: Remove packages that are no longer needed
+  shell: apt-get -y autoremove && apt-get -y clean
+  sudo: yes
+
+- name: Clean up user home directories
+  shell: rm -rf .ansible .*history .*info .*version chdir="/home/{{ item }}"
+  with_items:
+    - deploy
+    - dynatrace
+  ignore_errors: yes
+  sudo: yes
+
+- name: Clean up user home directories, pt.2
+  shell: rm -rf * chdir="/home/{{ item }}"
+  with_items:
+    - deploy
+  ignore_errors: yes
+  sudo: yes
+
+- name: Clean up the 'deploy' user's .ssh folder
+  shell: rm -rf /home/deploy/.ssh
+  ignore_errors: yes
+  sudo: yes
+
+- name: Clean up /tmp directory
+  shell: rm -rf /tmp/*
+  ignore_errors: yes
+  sudo: yes
+
+- name: Clean up /var/log directory
+  shell: for i in `find /var/log -type f`; do rm -f $i; done
+  ignore_errors: yes
+  sudo: yes
+
+- name: Delete ansible playbook files
+  shell: rm -rf /var/ansible-local/roles/*
+  ignore_errors: yes
+  sudo: yes
+  when: remove_ansible_playbook is defined and remove_ansible_playbook

@@ -1,0 +1,8 @@
+- name: Remove package 'ant'
+  apt: pkg=ant state=absent
+  sudo: yes
+
+- name: Remove package 'default-jdk'
+  apt: pkg=default-jdk state=absent
+  when: default_jdk_installed|success
+  sudo: yes

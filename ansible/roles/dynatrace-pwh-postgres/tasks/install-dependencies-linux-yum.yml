@@ -1,0 +1,8 @@
+---
+- name: Install package 'postgresql'
+  yum: name=postgresql state=latest
+  sudo: yes
+  
+- name: Install package 'xmlstarlet'
+  yum: pkg=xmlstarlet state=present
+  sudo: yes

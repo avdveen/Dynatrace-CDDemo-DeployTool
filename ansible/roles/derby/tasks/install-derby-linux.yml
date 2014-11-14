@@ -1,0 +1,48 @@
+---
+- debug: msg={{ derby_install_dir }}
+
+- name: Create the Derby installation directory {{ derby_install_dir }}
+  file: path={{ derby_install_dir }} state=directory
+  sudo: yes
+
+- name: Install Derby
+  unarchive: src=db-derby-bin.tar.gz dest={{ derby_install_dir }}
+  sudo: yes
+
+- name: Gather the name of the Derby version installation directory
+  shell: find . -maxdepth 1 -name db-derby-\* -type d -printf '%T@ %p\n' | sort -k 1nr | cut -d' ' -f2 | head -1 chdir={{ derby_install_dir }}
+  register: derby_installed_version_dir
+  sudo: yes
+- debug: msg="Derby installed version directory? {{ derby_installed_version_dir.stdout }}"
+
+- name: Change ownership of the Derby installation directory
+  file: path={{ derby_install_dir }}/{{ derby_installed_version_dir.stdout }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  sudo: yes
+
+- name: Create a symlink of the Derby installation to {{ derby_install_dir }}/db-derby
+  file: src={{ derby_install_dir }}/{{ derby_installed_version_dir.stdout }} dest={{ derby_install_dir }}/db-derby owner=dynatrace group=dynatrace mode=0700 state=link
+  sudo: yes
+
+- name: Install DERBY_HOME in the 'dynatrace' user's .bashrc
+  lineinfile: dest="/home/dynatrace/.bashrc" regexp='^export DERBY_HOME.*' line="export DERBY_HOME={{ derby_install_dir }}/db-derby" state=present
+  sudo: yes
+
+- name: Install DERBY_HOME in the 'dynatrace' user's .profile
+  lineinfile: dest="/home/dynatrace/.profile" regexp='^export DERBY_HOME.*' line="export DERBY_HOME={{ derby_install_dir }}/db-derby" state=present
+  sudo: yes
+
+- name: Install DERBY_HOME/bin in the 'dynatrace' user's .bashrc's PATH variable
+  lineinfile: dest="/home/dynatrace/.bashrc" regexp='^export PATH=$PATH:$DERBY_HOME' line="export PATH=$PATH:$DERBY_HOME/bin" state=present
+  sudo: yes
+  
+- name: Install DERBY_HOME/bin in the 'dynatrace' user's .profile's PATH variable
+  lineinfile: dest="/home/dynatrace/.profile" regexp='^export PATH=$PATH:$DERBY_HOME' line="export PATH=$PATH:$DERBY_HOME/bin" state=present
+  sudo: yes
+
+- name: Install @reboot cron job for Derby's network server
+  cron: job=". /home/dynatrace/.profile && {{ derby_install_dir }}/db-derby/bin/startNetworkServer" user=dynatrace special_time=reboot name='Starts the Derby network server' cron_file=db-derby state=present
+  sudo: yes
+
+- name: Start the Derby network server
+  shell: su dynatrace -c ". /home/dynatrace/.profile && {{ derby_install_dir }}/db-derby/bin/startNetworkServer &"
+  sudo: yes

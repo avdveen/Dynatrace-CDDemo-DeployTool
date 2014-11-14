@@ -1,0 +1,9 @@
+- name: Update the apache2 init.d script so that the agent is started after the Dynatrace Web Server Agent
+  lineinfile: "dest=/etc/init.d/apache2 regexp='^# Required-Start:(.*)' line='# Required-Start: $local_fs $remote_fs $network $syslog $named dynaTraceWebServeragent'"
+  notify: reload apache2
+  sudo: yes
+
+- name: Update the apache2 init.d script so that the agent is stopped after the Dynatrace Web Server Agent
+  lineinfile: "dest=/etc/init.d/apache2 regexp='^# Required-Stop:(.*)' line='# Required-Stop: $local_fs $remote_fs $network $syslog $named dynaTraceWebServeragent'"
+  notify: reload apache2
+  sudo: yes

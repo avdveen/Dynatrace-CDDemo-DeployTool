@@ -1,0 +1,5 @@
+---
+- name: Disable DNS lookup for SSH connections
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^UseDNS.*' line='UseDNS no' state=present
+  sudo: yes
+  notify: reload sshd

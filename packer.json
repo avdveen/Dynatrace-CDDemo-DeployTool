@@ -1,0 +1,185 @@
+{
+  "variables": {
+    "ansible_role": null,
+    "num_cpus": "{{env `VM_NUM_CPUS`}}",
+    "mem_size": "{{env `VM_MEM_SIZE`}}",
+    "disk_size": "{{env `VM_DISK_SIZE`}}",
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI`}}",
+    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "aws_ssh_username": "{{env `AWS_SSH_USERNAME`}}",
+    "aws_ami_name": "{{env `AWS_AMI_NAME`}}"
+  },
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'deploy' | sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "apt-get -y install build-essential linux-headers-amd64",
+        "mkdir /mnt/isomount",
+        "mount -t iso9660 -o loop /home/deploy/VBoxGuestAdditions.iso /mnt/isomount",
+        "/mnt/isomount/VBoxLinuxAdditions.run",
+        "umount /mnt/isomount && rm -rf /mnt/isomount"
+      ],
+      "only": ["Debian-7-amd64-vbox"]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'deploy' | sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "echo 'deploy ALL=NOPASSWD:ALL' > /etc/sudoers.d/deploy"
+      ],
+      "override": {
+        "Debian-7-amd64-amazon-ebs": {
+          "execute_command": "sudo -E sh '{{ .Path }}'",
+          "inline": [
+            "adduser --disabled-password --gecos 'deployment User' deploy",
+            "echo 'deploy:deploy' | chpasswd",
+            "echo 'deploy ALL=NOPASSWD:ALL' > /etc/sudoers.d/deploy"
+          ]
+        }
+      }
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "apt-get update",
+        "apt-get install -y build-essential python-dev python-setuptools",
+        "cd /tmp && wget http://releases.ansible.com/ansible/ansible-latest.tar.gz",
+        "tar xzf ansible-latest.tar.gz && rm -f ansible-latest.tar.gz",
+        "cd ansible-* && python setup.py install"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "mkdir -m 0777 /var/ansible-local",
+        "chown deploy:deploy /var/ansible-local"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "settings/set-install-env.sh",
+      "destination": "/var/ansible-local/set-install-env.sh"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_dir": "ansible",
+      "playbook_file": "ansible/playbook.yml",
+      "staging_directory": "/var/ansible-local",
+      "command": ". ./set-install-env.sh && ansible-playbook -e 'ansible_role={{user `ansible_role`}}'"
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "chmod 0700 /var/ansible-local"
+      ]
+    }
+  ], 
+  "builders": [
+    {
+      "name": "Debian-7-amd64-vbox",
+      "vm_name": "Debian-7-amd64",
+      "output_directory": "output/Debian-7-amd64-vbox",
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
+        "debian-installer=en_US <wait>",
+        "auto <wait>",
+        "locale=en_US <wait>",
+        "kbd-chooser/method=us <wait>",
+        "netcfg/get_hostname=Dynatrace <wait>",
+        "netcfg/get_domain=Dynatrace <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "{{user `disk_size`}}",
+      "guest_os_type": "Debian_64",
+      "http_directory": "http",
+      "iso_checksum": "0b31bccccb048d20b551f70830bb7ad0",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://cdimage.debian.org/debian-cd/7.7.0/amd64/iso-cd/debian-7.7.0-amd64-netinst.iso",
+      "ssh_username": "deploy",
+      "ssh_password": "deploy",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'halt -p' > shutdown.sh; sudo -E sh 'shutdown.sh'",
+      "guest_additions_path": "VBoxGuestAdditions.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "{{user `mem_size`}}" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "{{user `num_cpus`}}" ]
+      ]
+    },
+    {
+      "name": "Debian-7-amd64-vmware",
+      "vm_name": "Debian-7-amd64",
+      "output_directory": "output/Debian-7-amd64-vmware",
+      "type": "vmware-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
+        "debian-installer=en_US <wait>",
+        "auto <wait>",
+        "locale=en_US <wait>",
+        "kbd-chooser/method=us <wait>",
+        "netcfg/get_hostname=Dynatrace <wait>",
+        "netcfg/get_domain=Dynatrace <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_type_id": 1,
+      "guest_os_type": "debian5-64",
+      "http_directory": "http",
+      "iso_checksum": "8a3c2ad7fd7a9c4c7e9bcb5cae38c135",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://cdimage.debian.org/debian-cd/7.0/amd64/iso-cd/debian-7.0-amd64-netinst.iso",
+      "ssh_username": "deploy",
+      "ssh_password": "deploy",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'halt -p' > shutdown.sh; sudo -E sh 'shutdown.sh'",
+      "vmx_data": {
+        "memsize": "{{user `mem_size`}}", "numvcpus": "{{user `num_cpus`}}", "cpuid.coresPerSocket": "1"
+      }
+    },
+    {
+      "name": "Debian-7-amd64-amazon-ebs",
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "instance_type": "{{user `aws_instance_type`}}",
+      "ssh_username": "{{user `aws_ssh_username`}}",
+      "ami_name": "{{user `aws_ami_name`}}",
+      "ami_description": "Debian 7 (amd64)"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "vagrant/{{.BuildName}}/{{.BuildName}}.box",
+      "keep_input_artifact": true
+    }
+  ]
+}

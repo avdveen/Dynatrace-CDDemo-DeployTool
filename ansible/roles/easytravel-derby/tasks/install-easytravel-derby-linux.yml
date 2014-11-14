@@ -1,0 +1,32 @@
+---
+- name: Remove the 'built.properties' file in 'commons-demo'
+  file: path='{{ easytravel_git_repo_dir }}/commons-demo/built.properties' state=absent
+  sudo: yes
+
+- name: Remove the 'built.properties' file in 'DatabaseLayer'
+  file: path='{{ easytravel_git_repo_dir }}/DatabaseLayer/built.properties' state=absent
+  sudo: yes
+
+- name: Build the easyTravel 'commons-demo'
+  shell: su dynatrace -c ant chdir='{{ easytravel_git_repo_dir }}/commons-demo'
+  sudo: yes
+
+- name: Build the easyTravel 'DatabaseLayer'
+  shell: su dynatrace -c ant chdir='{{ easytravel_git_repo_dir }}/DatabaseLayer'
+  sudo: yes
+
+- name: Copy the com.dynatrace.easytravel.commons.jar to Derby's lib folder
+  copy: src='{{ easytravel_git_repo_dir }}/Distribution/dist/com.dynatrace.easytravel.commons.jar' dest='{{ derby_install_dir }}/db-derby/lib' owner=dynatrace group=dynatrace
+  sudo: yes
+
+- name: Copy the com.dynatrace.easytravel.database.jar to Derby's lib folder
+  copy: src='{{ easytravel_git_repo_dir }}/Distribution/dist/com.dynatrace.easytravel.database.jar' dest='{{ derby_install_dir }}/db-derby/lib' owner=dynatrace group=dynatrace
+  sudo: yes
+
+- name: Add the easyTravel libraries for Derby to CLASSPATH in the 'dynatrace' user's .bashrc
+  lineinfile: dest="/home/dynatrace/.bashrc" regexp='^export CLASSPATH=$CLASSPATH:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.database' line="export CLASSPATH=$CLASSPATH:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.commons.jar:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.database.jar" state=present
+  sudo: yes
+
+- name: Add the easyTravel libraries for Derby to CLASSPATH in the 'dynatrace' user's .bashrc
+  lineinfile: dest="/home/dynatrace/.profile" regexp='^export CLASSPATH=$CLASSPATH:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.database' line="export CLASSPATH=$CLASSPATH:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.commons.jar:{{ derby_install_dir }}/db-derby/lib/com.dynatrace.easytravel.database.jar" state=present
+  sudo: yes

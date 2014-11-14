@@ -1,0 +1,9 @@
+- name: Remove package 'ant'
+  yum: pkg=ant state=absent
+  sudo: yes
+
+- name: Remove package 'default-jdk'
+  yum: pkg=default-jdk state=absent
+  when: default_jdk_installed|success
+  sudo: yes
+

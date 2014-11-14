@@ -1,0 +1,15 @@
+---
+- name: Copy the server fix pack to /tmp
+  copy: src={{ dynatrace_fixpack_file }} dest=/tmp/dynatrace.dtf
+
+- name: Wait for the Dynatrace server to become available via port 8020
+  wait_for: port=8020 delay=5 state=present
+  sudo: yes
+
+- name: Install the Dynatrace server fix pack
+  shell: curl --user admin:admin --form "file=@/tmp/dynatrace.dtf" http://localhost:8020/rest/management/installjobs
+  register: dynatrace_fixpack_file_installed
+
+- name: Wait for the Dynatrace server fix pack installation to finish
+  wait_for: path="{{ dynatrace_install_dir }}/server/updates/fixpackhistory.xml" timeout=600
+  sudo: yes

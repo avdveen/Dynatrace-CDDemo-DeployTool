@@ -1,0 +1,40 @@
+---
+- name: Copy jdk install package to tmp
+  copy: src={{java_archive}} dest=/tmp
+
+- name: Extract Java archive
+  unarchive: src=/tmp/{{ java_archive }} dest={{ download_folder }}
+  sudo: yes
+
+- name: Gather the name of the Dynatrace version installation directory
+  shell: find . -maxdepth 1 -name jdk\* -type d -printf '%T@ %p\n' | sort -k 1nr | cut -d' ' -f2 | head -1 chdir={{ download_folder }}
+  register: java_installed_version_dir
+  sudo: yes
+
+- name: Rename directory
+  shell: mv -f {{ java_installed_version_dir.stdout }} {{ java_name }} chdir={{ download_folder }} creates={{ java_name }}
+  sudo: yes
+
+- name: Fix ownership
+  file: "state=directory path={{download_folder}}/{{java_name}} owner=root group=root recurse=yes"
+  sudo: yes
+
+- name: Create Java folder
+  file: "state=directory path={{java_folder}}"
+  sudo: yes
+
+- name: Move Java to final folder
+  command: "mv {{download_folder}}/{{java_name}} {{java_folder}} creates={{java_folder}}/{{java_name}}"
+  sudo: yes
+
+- name: Create symlink for easier update
+  file: "state=link src={{java_folder}}/{{java_name}} dest={{java_folder}}/{{java_alias}}"
+  sudo: yes
+
+- name: Make Java available for system
+  command: 'update-alternatives --install "/usr/bin/java" "java" "{{java_folder}}/{{java_alias}}/bin/java" 1'
+  sudo: yes
+
+- name: Make Oracle JDK the default
+  command: 'update-alternatives --set "java" "{{java_folder}}/{{java_alias}}/bin/java"'
+  sudo: yes

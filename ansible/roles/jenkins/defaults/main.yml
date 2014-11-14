@@ -1,0 +1,11 @@
+---
+placeholder: 'placeholder'
+plugins:
+ - git
+ - delivery-pipeline-plugin
+# plugins:
+#   - 'ldap'
+#   - 'github'
+#   - 'translation'
+#   - 'preSCMbuildstep'
+#   - 'gravatar'

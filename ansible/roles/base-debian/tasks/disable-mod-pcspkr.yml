@@ -1,0 +1,5 @@
+---
+- name: Blacklist the PC speaker module
+  copy: content='blacklist pcspkr' dest=/etc/modprobe.d/pcspkr.conf
+  sudo: yes
+  notify: update module dependencies

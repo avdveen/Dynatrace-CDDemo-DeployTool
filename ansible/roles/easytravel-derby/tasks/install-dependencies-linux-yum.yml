@@ -1,0 +1,16 @@
+- name: Install package 'ant'
+  yum: pkg=ant state=latest
+  sudo: yes
+
+- name: Check if 'javac' is on the PATH
+  shell: which javac
+  sudo: yes
+  ignore_errors: yes
+  register: which_javac_cmd
+
+- name: Install package 'default-jdk'
+  yum: pkg=default-jdk state=present
+  register: default_jdk_installed
+  when: which_javac_cmd.rc != 0
+  sudo: yes
+

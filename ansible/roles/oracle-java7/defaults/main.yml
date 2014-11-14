@@ -1,0 +1,6 @@
+---
+java_name: jdk1.7
+java_archive: jdk-7-linux-x64.tar.gz
+download_folder: /usr/src
+java_folder: /usr/lib/jvm
+java_alias: java-7-oracle

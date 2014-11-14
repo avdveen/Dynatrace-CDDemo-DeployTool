@@ -1,0 +1,13 @@
+---
+- include: install-dependencies-linux-apt.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "apt"
+- include: install-dependencies-linux-yum.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "yum"
+
+- include: install-easytravel-git-repo-linux.yml
+  when: ansible_system == "Linux"
+
+- include: remove-dependencies-linux-apt.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "apt"
+- include: remove-dependencies-linux-yum.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "yum"

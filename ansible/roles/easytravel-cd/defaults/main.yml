@@ -1,0 +1,9 @@
+---
+easytravel_combined_deploy_playbook_dir: /home/dynatrace/easytravel-deploy-playbook
+easytravel_combined_deploy_playbook_archive: easytravel-cd-deploy-combined-playbook.zip
+
+easytravel_git_repo_dir: /opt/git/easytravel
+easytravel_business_backend_deploy_playbook_archive: easytravel-cd-deploy-business-backend-playbook.zip
+easytravel_business_backend_deploy_playbook_git_repo_dir: /opt/git/easytravel-deploy-business-backend
+easytravel_customer_frontend_deploy_playbook_archive: easytravel-cd-deploy-customer-frontend-playbook.zip
+easytravel_customer_frontend_deploy_playbook_git_repo_dir: /opt/git/easytravel-deploy-customer-frontend

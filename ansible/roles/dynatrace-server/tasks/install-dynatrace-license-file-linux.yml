@@ -1,0 +1,4 @@
+---
+- name: Install the Dynatrace server license to {{ dynatrace_install_dir }}/dynatrace/server/conf
+  copy: src={{ dynatrace_license_file }} dest={{ dynatrace_install_dir }}/dynatrace/server/conf owner=dynatrace group=dynatrace mode=0600
+  sudo: yes

@@ -1,0 +1,27 @@
+---
+- name: Stop and disable running Postgres services
+  service: name=postgresql state=stopped enabled=no
+  sudo: yes
+  ignore_errors: yes
+
+- name: Enable and start Dynatrace services
+  service: name=postgresql state=restarted sleep=5 enabled=yes
+  sudo: yes
+
+- name: Drop an existing Postgres database 'dynatrace'
+  shell: su - postgres -c 'dropdb dynatrace'
+  sudo: yes
+  ignore_errors: yes
+
+- name: Drop an existing Postgres user 'dynatrace'
+  shell: su - postgres -c 'dropuser dynatrace'
+  sudo: yes
+  ignore_errors: yes
+
+- name: Create Postgres user 'dynatrace'
+  shell: su - postgres -c 'echo -e dynatrace\\ndynatrace | createuser --pwprompt --no-superuser --no-createdb --no-createrole dynatrace'
+  sudo: yes
+
+- name: Create Postgres database 'dynatrace'
+  shell: su - postgres -c 'createdb -O dynatrace --encoding=UTF8 --locale=en_US.UTF-8 dynatrace'
+  sudo: yes

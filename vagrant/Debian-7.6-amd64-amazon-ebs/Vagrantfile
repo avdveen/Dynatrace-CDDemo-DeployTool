@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "Debian-7.6-amd64-amazon-ebs"
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  config.ssh.username = "deploy"
+  config.ssh.private_key_path = "../../keys/deploy"
+
+  # See: https://github.com/mitchellh/vagrant-aws for more information
+  config.vm.provider :aws do |aws, override|
+    aws.access_key_id = ENV['AWS_ACCESS_KEY']
+    aws.secret_access_key = ENV['AWS_SECRET_KEY']
+    aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
+
+    aws.ami = ENV['AWS_AMI_NAME']
+    aws.region = ENV['AWS_REGION']
+    aws.instance_type = ENV['AWS_INSTANCE_TYPE']
+    aws.security_groups = "default"
+
+    override.ssh.username = ENV['AWS_SSH_USERNAME']
+    override.ssh.private_key_path = ENV['AWS_SSH_PRIVATE_KEY_PATH']
+  end
+
+end

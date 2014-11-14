@@ -1,0 +1,37 @@
+---
+- name: Check if a full installer is provided locally
+  local_action: stat path={{ dynatrace_local_files_prefix }}/{{ dynatrace_full_installer_linux_file }}
+  register: dynatrace_full_installer_file_provided
+- debug: msg="Dynatrace server installer provided? {{ dynatrace_full_installer_file_provided.stat.exists }}"
+
+- name: Check if a license for the server is provided locally
+  local_action: stat path={{ dynatrace_local_files_prefix }}/{{ dynatrace_license_file }}
+  register: dynatrace_license_file_provided
+- debug: msg="Dynatrace license file provided? {{ dynatrace_license_file_provided.stat.exists }}"
+
+- name: Check if a fix pack for the server is provided locally
+  local_action: stat path={{ dynatrace_local_files_prefix }}/{{ dynatrace_fixpack_file }}
+  register: dynatrace_fixpack_file_provided
+- debug: msg="Dynatrace fixpack file provided? {{ dynatrace_fixpack_file_provided.stat.exists }}"
+
+- include: install-dependencies-linux-apt.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux" and ansible_pkg_mgr == "apt"
+- include: install-dependencies-linux-yum.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux" and ansible_pkg_mgr == "yum"
+
+- include: install-dynatrace-user-linux.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux"
+
+- include: install-dynatrace-linux.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux"
+
+- include: install-dynatrace-license-file-linux.yml
+  when: dynatrace_license_file_provided.stat.exists and ansible_system == "Linux"
+
+- include: install-dynatrace-fixpack-file-linux.yml
+  when: dynatrace_fixpack_file_provided.stat.exists and ansible_system == "Linux"
+
+- include: remove-dependencies-linux-apt.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux" and ansible_pkg_mgr == "apt"
+- include: remove-dependencies-linux-yum.yml
+  when: dynatrace_full_installer_file_provided.stat.exists and ansible_system == "Linux" and ansible_pkg_mgr == "yum"

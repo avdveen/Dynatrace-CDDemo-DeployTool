@@ -1,0 +1,56 @@
+---
+- name: Remove an existing easyTravel Git repository
+  file: path={{ easytravel_git_repo_dir }} state=absent
+  sudo: yes
+
+- name: Create the easyTravel Git repository directory {{ easytravel_git_repo_dir }}
+  file: path={{ easytravel_git_repo_dir }} owner=dynatrace group=dynatrace state=directory
+  sudo: yes
+
+- name: Extract the easyTravel source package to the Git repository directory
+  unarchive: src=easytravel-src.zip dest={{ easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Change ownership of the easyTravel Git repository directory
+  file: path={{ easytravel_git_repo_dir }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  sudo: yes
+
+- name: Create .gitignore files in empty easyTravel sub-directories so that they are not omitted by Git
+  shell: find . -type d -empty -not -path './.git/*' -exec touch {}/.gitignore \; chdir={{ easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Initialize the Git repository
+  shell: su dynatrace -c 'git init' chdir={{  easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Configure the Git repository's user name 'Dynatrace User'
+  shell: su dynatrace -c 'git config user.name "Dynatrace user"' chdir={{  easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Configure the Git repository's user email 'dynatrace@easytravel.com'
+  shell: su dynatrace -c 'git config user.email "dynatrace@easytravel.com"' chdir={{  easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Add files to the Git repository
+  shell: su dynatrace -c 'git add *' chdir={{  easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Create the initial commit
+  shell: su dynatrace -c 'git commit -m "Initial commit"' chdir={{  easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Configure easyTravel for the linux x86_64 platform
+  lineinfile: dest={{ easytravel_git_repo_dir }}/Distribution/platform.properties  regexp={{ item.regexp }} line={{ item.line }} state=present
+  sudo: yes
+  with_items:
+    - { regexp: '^platform.ws=.*', line: 'platform.ws=gtk' }
+    - { regexp: '^platform.os=.*', line: 'platform.os=linux' }
+    - { regexp: '^platform.arch=.*', line: 'platform.arch=x86_64' }
+
+- name: Add the changed platform settings to the easyTravel Git repository
+  shell: su dynatrace -c 'git add Distribution/platform.properties' chdir={{ easytravel_git_repo_dir }}
+  sudo: yes
+
+- name: Commit configuration changes to Git
+  shell: su dynatrace -c 'git commit -m "Set correct platform configuration"' chdir={{ easytravel_git_repo_dir }}
+  sudo: yes

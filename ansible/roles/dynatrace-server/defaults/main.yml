@@ -1,0 +1,11 @@
+---
+dynatrace_install_dir: /opt
+
+# Do not change anything below unless you know what you are doing!
+dynatrace_server_services:
+  - dynaTraceServer
+
+dynatrace_local_files_prefix: "{{ playbook_dir }}/roles/dynatrace-server/files"
+dynatrace_full_installer_linux_file: dynatrace.jar
+dynatrace_fixpack_file: dynatrace.dtf
+dynatrace_license_file: dtlicense.key

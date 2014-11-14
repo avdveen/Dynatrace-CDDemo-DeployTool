@@ -1,0 +1,20 @@
+---
+- name: Remove an existing combined deployment playbook in {{ easytravel_combined_deploy_playbook_dir }}
+  file: path="{{ easytravel_combined_deploy_playbook_dir }}" state=absent
+  sudo: yes
+
+- name: Create the combined deployment playbook directory in {{ easytravel_combined_deploy_playbook_dir }}
+  file: path="{{ easytravel_combined_deploy_playbook_dir }}" state=directory owner=dynatrace group=dynatrace
+  sudo: yes
+
+- name: Install the combined deployment playbook to {{easytravel_combined_deploy_playbook_dir }}
+  unarchive: src=/tmp/easytravel-cd-deploy-combined-playbook.zip dest={{easytravel_combined_deploy_playbook_dir }}
+  sudo: yes
+
+- name: Change ownership of the combined deployment playbook directory
+  file: path={{ easytravel_combined_deploy_playbook_dir }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  sudo: yes
+
+- name: Install the pipeline.sh script
+  template: src=pipeline.sh dest={{ easytravel_combined_deploy_playbook_dir }} owner=dynatrace group=dynatrace mode=0744
+  sudo: yes

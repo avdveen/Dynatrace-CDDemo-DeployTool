@@ -1,0 +1,4 @@
+---
+- name: Install a (2s) delay to 'interface up' to make dhclient happy
+  lineinfile: dest=/etc/network/interfaces regexp='^pre-up sleep.*' line='pre-up sleep 2' state=present
+  sudo: yes

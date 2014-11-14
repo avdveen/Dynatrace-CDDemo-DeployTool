@@ -1,0 +1,8 @@
+---
+- name: Install package 'git'
+  yum: pkg=git state=present
+  sudo: yes
+
+- name: Install package 'unzip'
+  yum: pkg=unzip state=present
+  sudo: yes

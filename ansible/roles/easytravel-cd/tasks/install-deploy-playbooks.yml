@@ -1,0 +1,42 @@
+---
+- name: Remove an existing deployment playbook in {{ item.directory }}
+  file: path="{{ item.directory }}" state=absent
+  sudo: yes
+
+- name: Create the deployment playbook directory in {{ item.directory }}
+  file: path="{{ item.directory }}" state=directory
+  sudo: yes
+
+- name: Install the deployment playbook to {{ item.directory }}
+  unarchive: src=/tmp/{{ item.archive }} dest={{ item.directory }}
+  sudo: yes
+
+- name: Change ownership of the Git repository directory
+  file: path={{ item.directory }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  sudo: yes
+
+- name: Initialize the Git repository
+  shell: su dynatrace -c 'git init' chdir={{ item.directory }}
+  sudo: yes
+
+- name: Configure the Git repository's user name 'Dynatrace User'
+  shell: su dynatrace -c 'git config user.name "Dynatrace user"' chdir={{ item.directory }}
+  sudo: yes
+
+- name: Configure the Git repository's user email 'dynatrace@easytravel.com'
+  shell: su dynatrace -c 'git config user.email "dynatrace@easytravel.com"' chdir={{ item.directory }}
+  sudo: yes
+
+- name: Add files to the Git repository
+  shell: su dynatrace -c 'git add *' chdir={{ item.directory }}
+  sudo: yes
+
+- name: Create the initial commit
+  shell: su dynatrace -c 'git commit -m "Initial commit"' chdir={{ item.directory }}
+  sudo: yes
+
+- name: Install the deploy.sh script
+  template: src=deploy.sh dest={{ item }} owner=dynatrace group=dynatrace mode=0744
+  sudo: yes
+  with_items:
+  - "{{ item.directory }}"

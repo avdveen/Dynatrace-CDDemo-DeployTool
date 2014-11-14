@@ -1,0 +1,12 @@
+---
+- name: Install package 'locales'
+  apt: name=locales state=present
+  sudo: yes
+
+- name: Generate locales
+  locale_gen: name={{ locale_LANG }} state=present
+  sudo: yes
+
+- name: Update locales
+  shell: update-locale LANGUAGE={{ locale_LANG }} LANG={{ locale_LANG }} LC_ALL={{ locale_LC_ALL }} LC_TYPE={{ locale_LC_TYPE }}
+  sudo: yes

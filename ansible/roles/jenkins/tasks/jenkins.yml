@@ -1,0 +1,45 @@
+---
+# Add Jenkins repository
+- include: repo.yml
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
+
+# Install dependencies
+- include: dependencies_deb.yml
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
+  
+- name: Ensure Jenkins is not running if installed
+  service: name=jenkins state=stopped
+  sudo: yes
+  ignore_errors: yes
+  
+# Install Jenkins
+- name: Install Jenkins
+  sudo: yes
+  action: "{{ ansible_pkg_mgr }} pkg=jenkins state=latest update-cache=yes"
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
+  register: jenkins_install
+  
+- name: Ensure Jenkins is not running if installed
+  service: name=jenkins state=stopped
+  sudo: yes
+
+# Pick up configuration changes
+- include: config.yml
+
+- name: Change ownership of Jenkins CLI
+  file: path={{ jenkins_dest }} owner={{ tomcat_user }} group={{ tomcat_user }} state=directory recurse=yes
+  sudo: yes
+  
+- name: Change ownership of Jenkins installation
+  file: path=/usr/share/jenkins owner={{ tomcat_user }} group={{ tomcat_user }} state=directory recurse=yes
+  sudo: yes
+  
+- name: Ensure Jenkins is started
+  service: name=jenkins state=started
+  sudo: yes
+
+# Install Jenkins cli
+- include: cli.yml
+
+# Install/update Jenkins plugins
+- include: plugins.yml

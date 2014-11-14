@@ -1,0 +1,11 @@
+---
+dependencies:
+  - { role: 'oracle-java7' }
+  - { role: 'easytravel-git-repo' }
+  - { role: 'jenkins' }
+  - { role: 'tomcat7', tomcat_install_dir: '/opt/tomcat-cf', tomcat_suffix: '-cf', tomcat_http_port: 8080, tomcat_server_port: 8005, tomcat_ajp_port: 8009 }
+  - { role: 'tomcat7', tomcat_install_dir: '/opt/tomcat-bb', tomcat_suffix: '-bb', tomcat_http_port: 8091, tomcat_server_port: 8015, tomcat_ajp_port: 8019 }
+  - { role: 'easytravel-derby' }
+  - { role: 'dynatrace' }
+  - { role: 'dynatrace-pwh-postgres' }
+  - { role: 'apache2-dynatrace-wsagent' }

@@ -1,0 +1,34 @@
+---
+# Installs the individual deployment playbooks
+- name: Check if the customer frontend deployment playbook is present
+  copy: src={{ item }} dest=/tmp/{{ item }}
+  register: customer_frontend_deploy_playbook_provided
+  ignore_errors: yes
+  with_items:
+    - "{{ easytravel_customer_frontend_deploy_playbook_archive }}"
+
+- include: install-deploy-playbooks.yml
+  item: { archive: "{{ easytravel_customer_frontend_deploy_playbook_archive }}", directory: "{{ easytravel_customer_frontend_deploy_playbook_git_repo_dir }}" }
+  when: customer_frontend_deploy_playbook_provided|success
+
+- name: Check if the business backend deployment playbook is present
+  copy: src={{ item }} dest=/tmp/{{ item }}
+  register: business_backend_deploy_playbook_provided
+  ignore_errors: yes
+  with_items:
+    - "{{ easytravel_business_backend_deploy_playbook_archive }}"
+
+- include: install-deploy-playbooks.yml
+  item: { archive: "{{ easytravel_business_backend_deploy_playbook_archive }}", directory: "{{ easytravel_business_backend_deploy_playbook_git_repo_dir }}" }
+  when: business_backend_deploy_playbook_provided|success
+
+# Installs a combined reference playbook
+- name: Check if combined deployment playbook is present
+  copy: src={{ item }} dest=/tmp/{{ item }}
+  register: combined_deployment_playbook_provided
+  ignore_errors: yes
+  with_items:
+    - "{{ easytravel_combined_deploy_playbook_archive }}"
+
+- include: install-combined-deployment-playbook.yml
+  when: combined_deployment_playbook_provided|success

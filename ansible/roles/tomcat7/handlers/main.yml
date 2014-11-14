@@ -1,0 +1,4 @@
+---
+- name: restart tomcat
+  service: name=tomcat{{ tomcat_suffix }} state=restarted sleep=5
+  sudo: yes

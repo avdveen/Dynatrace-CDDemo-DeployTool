@@ -1,0 +1,8 @@
+---
+- name: Update APT cache
+  apt: update_cache=yes
+  sudo: yes
+
+- name: Install package 'apache2'
+  apt: pkg=apache2 state=present
+  sudo: yes

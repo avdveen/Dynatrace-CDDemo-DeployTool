@@ -1,0 +1,7 @@
+---
+locale_LANG: en_US.UTF-8
+locale_LC_ALL: en_US.UTF-8
+locale_LC_TYPE: UTF-8
+
+user_deploy_pubkey: "{{ lookup('file', 'keys/deploy.pub') }}"
+user_dynatrace_pubkey: "{{ lookup('file', 'keys/dynatrace.pub') }}"

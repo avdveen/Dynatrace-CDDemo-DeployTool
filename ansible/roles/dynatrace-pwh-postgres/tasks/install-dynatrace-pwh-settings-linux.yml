@@ -1,0 +1,56 @@
+---
+- name: Check if the Dynatrace Server's server.config.xml is present
+  wait_for: path={{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml state=present
+  sudo: yes
+
+- name: Set the database name in Dynatrace's server.config.xml to 'dynatrace'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/database/@name' -v 'dynatrace' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the database type in Dynatrace's server.config.xml to 'PostgreSQL'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/database/@dbms' -v 'PostgreSQL' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the database user in Dynatrace's server.config.xml to 'dynatrace'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/credential/@user' -v 'dynatrace' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the database password in Dynatrace's server.config.xml to 'dynatrace'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/credential/@password' -v 'dynatrace' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the database host in Dynatrace's server.config.xml to 'localhost'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@host' -v 'localhost' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the database port in Dynatrace's server.config.xml to '5432'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@port' -v '5432' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'autopurge_measures' in Dynatrace's server.config.xml to 'true'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@autopurge_measures' -v 'true' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'connectionstartup' in Dynatrace's server.config.xml to 'true'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@connectionstartup' -v 'true' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'embeddeddatapath' in Dynatrace's server.config.xml to 'repository'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@embeddeddatapath' -v 'repository' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'ignorewarnnonproduction' in Dynatrace's server.config.xml to 'false'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@ignorewarnnonproduction' -v 'false' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set the connection URL in Dynatrace's server.config.xml to 'jdbc:postgresql://localhost:5432/dynatrace'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@url' -v 'jdbc:postgresql://localhost:5432/dynatrace' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'usessl' in Dynatrace's server.config.xml to 'false'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@usessl' -v 'false' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes
+
+- name: Set 'useurl' in Dynatrace's server.config.xml to 'false'
+  shell: "xmlstarlet ed -L -u '//dynatrace/repositoryconfig/repository/connection/@useurl' -v 'false' {{ dynatrace_install_dir }}/dynatrace/server/conf/server.config.xml"
+  sudo: yes

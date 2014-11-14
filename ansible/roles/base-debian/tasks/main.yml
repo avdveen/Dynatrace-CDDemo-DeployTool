@@ -1,0 +1,16 @@
+---
+- apt: update_cache=yes upgrade=dist
+  sudo: yes
+
+- include: set-locale.yml
+- include: set-delay-before-ifup.yml
+
+- include: install-user-deploy.yml
+- include: install-user-dynatrace.yml
+- include: install-grub-defaults.yml
+- include: install-ufw.yml
+
+- include: disable-dns-lookup-for-ssh-connections.yml
+- include: disable-mod-pcspkr.yml
+- include: disable-password-based-logins-via-ssh.yml
+- include: disable-login-by-user-root.yml

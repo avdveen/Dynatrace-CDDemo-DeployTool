@@ -1,0 +1,9 @@
+---
+- name: Remove package 'curl'
+  apt: name=curl state=absent
+  sudo: yes
+
+- name: Remove package 'default-jre'
+  apt: pkg=default-jre state=absent
+  when: default_jre_installed|success
+  sudo: yes

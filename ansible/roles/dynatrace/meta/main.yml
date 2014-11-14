@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: 'dynatrace-server', dynatrace_server_services: ['dynaTraceServer', 'dynaTraceCollector', 'dynaTraceWebServerAgent'] }

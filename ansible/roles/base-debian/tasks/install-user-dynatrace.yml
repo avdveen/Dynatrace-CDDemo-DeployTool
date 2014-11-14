@@ -1,0 +1,29 @@
+---
+- name: Create group 'dynatrace'
+  group: name=dynatrace state=present
+  sudo: yes
+
+- name: Create user 'dynatrace' in group 'dynatrace'
+  user: name=dynatrace group=dynatrace shell=/bin/bash
+  sudo: yes
+
+- name: Set password for user 'dynatrace'
+  shell: echo 'dynatrace:dynatrace' | chpasswd
+  sudo: yes
+
+- name: Add user 'dynatrace' to sudoers
+  lineinfile: "dest=/etc/sudoers.d/dynatrace regexp='^dynatrace' line='dynatrace ALL=(ALL) NOPASSWD: ALL' create=yes"
+  sudo: yes
+
+- name: Add SSH public key to user 'dynatrace'
+  authorized_key: user=dynatrace key="{{ user_dynatrace_pubkey | mandatory }}"
+  when: user_dynatrace_pubkey is defined
+  sudo: yes
+
+- name: Set locale in .bashrc (required to make user locale work on Amazon EC2 images)
+  lineinfile: dest=/home/dynatrace/.bashrc regexp='^export LC_ALL=' line='export LC_ALL="en_US.UTF-8"' create=yes
+  sudo: yes
+
+- name: Set locale in .profile (required to make user locale on Amazon EC2 images)
+  lineinfile: dest=/home/dynatrace/.profile regexp='^export LC_ALL=' line='export LC_ALL="en_US.UTF-8"' create=yes
+  sudo: yes

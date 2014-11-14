@@ -1,0 +1,13 @@
+---
+- name: reload sshd
+  service: name=ssh state=reloaded
+  sudo: yes
+
+- name: update grub
+  shell: update-grub
+  sudo: yes
+  ignore_errors: yes
+
+- name: update module dependencies
+  shell: depmod -ae && update-initramfs -u
+  sudo: yes

@@ -1,0 +1,4 @@
+---
+- name: Remove package 'xmlstarlet'
+  yum: name=xmlstarlet state=absent
+  sudo: yes

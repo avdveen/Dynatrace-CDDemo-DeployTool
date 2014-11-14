@@ -1,0 +1,15 @@
+---
+- name: Install package 'curl'
+  yum: pkg=curl state=present
+  sudo: yes
+
+- name: Check if 'java' is on the PATH
+  shell: which java
+  sudo: yes
+  ignore_errors: yes
+  register: which_java_cmd
+
+- name: Install package 'default-jre'
+  yum: pkg=default-jre state=present
+  when: which_java_cmd.rc != 0
+  sudo: yes

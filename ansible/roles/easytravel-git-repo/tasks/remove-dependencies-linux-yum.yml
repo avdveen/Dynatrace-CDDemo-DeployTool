@@ -1,0 +1,4 @@
+---
+- name: Remove package 'unzip'
+  yum: pkg=unzip state=absent
+  sudo: yes

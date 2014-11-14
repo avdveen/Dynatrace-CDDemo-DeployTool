@@ -1,0 +1,12 @@
+---
+- name: Install package 'ufw' (Uncomplicated Firewall)
+  apt: name=ufw state=present
+  sudo: yes
+
+- name: Enable UFW and allow all traffic
+  ufw: state=enabled policy=allow
+  sudo: yes
+
+- name: Rate-limit connections via SSH
+  ufw: rule=limit port=ssh proto=tcp
+  sudo: yes

@@ -1,0 +1,8 @@
+---
+- include: install-dependencies-linux-apt.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "apt"
+- include: install-dependencies-linux-yum.yml
+  when: ansible_system == "Linux" and ansible_pkg_mgr == "yum"
+
+- include: install-apache2-dynatrace-agent-linux.yml
+  when: ansible_system == "Linux"

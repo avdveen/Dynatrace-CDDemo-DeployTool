@@ -1,0 +1,4 @@
+---
+- name: Remove package 'unzip'
+  apt: name=unzip state=absent
+  sudo: yes
