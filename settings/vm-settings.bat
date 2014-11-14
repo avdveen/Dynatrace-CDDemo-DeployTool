@@ -1,0 +1,4 @@
+@echo off
+set VM_NUM_CPUS=4
+set VM_MEM_SIZE=4096
+set VM_DISK_SIZE=20280

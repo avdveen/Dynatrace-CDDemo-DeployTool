@@ -1,4 +1,5 @@
 #!/bin/sh
+
 ANSIBLE_ROLE=easytravel-cd-debian
 
 if [ "$1" != "" ]; then
@@ -6,4 +7,4 @@ if [ "$1" != "" ]; then
 fi
 
 . ./settings/vm-settings.sh
-packer build -only=Debian-7-amd64-vbox -var "ansible_role=$ANSIBLE_ROLE" packer.json
+packer build -only=Debian-7-amd64-vmware -var "ansible_role=$ANSIBLE_ROLE" packer.json

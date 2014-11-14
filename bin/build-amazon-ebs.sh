@@ -1,4 +1,5 @@
 #!/bin/sh
+
 ANSIBLE_ROLE=easytravel-cd-debian
 
 if [ "$1" != "" ]; then
