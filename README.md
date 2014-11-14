@@ -12,4 +12,4 @@ Currently, the framework is able to create a [demo environment](https://communit
     - Creation of an AMI (backed by EBS)
     - Launching an Instance from an AMI
 
-Please see the [Project Homepage](https://community.compuwareapm.com/community/display/COE/Continuous+Delivery+with+Dynatrace+Demo+Environment%3A+Provisioning+Framework) for detailed instructions.
+Please see the [Project Homepage](https://community.compuwareapm.com/community/pages/viewpage.action?pageId=179737118) for detailed instructions.
