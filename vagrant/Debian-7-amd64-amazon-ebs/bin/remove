@@ -1,2 +1,0 @@
-#!/bin/bash
-vagrant box remove Debian-7.6-amd64-amazon-ebs
