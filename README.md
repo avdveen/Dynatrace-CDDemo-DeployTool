@@ -2,7 +2,7 @@
 
 This framework automates the provisioning of demo environments that show the capabilities around Continuous Delivery and DevOps with Dynatrace.
 
-The framework is based on [Packer](https://packer.io/), [Vagrant](https://www.vagrantup.com/) and [Ansible](http://www.ansible.com/) and runs on Linux only ([cygwin](https://www.cygwin.com/) support for Windows is on our roadmap).
+The framework is based on [Packer](https://packer.io/), [Vagrant](https://www.vagrantup.com/) and [Ansible](http://www.ansible.com/) and runs on Linux and Windows.
 
 Currently, the framework is able to create a [demo environment](https://community.compuwareapm.com/community/display/COE/Continuous+Delivery+with+Dynatrace+Demo+Environment) inside a single virtual machine (running a recent Debian Linux) for the following platforms:
 
