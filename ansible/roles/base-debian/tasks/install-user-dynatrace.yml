@@ -16,7 +16,7 @@
   sudo: yes
 
 - name: Add SSH public key to user 'dynatrace'
-  authorized_key: user=dynatrace key="{{ user_dynatrace_pubkey | mandatory }}"
+  authorized_key: user=dynatrace key="{{ user_dynatrace_pubkey }}"
   when: user_dynatrace_pubkey is defined
   sudo: yes
 

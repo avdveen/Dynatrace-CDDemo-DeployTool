@@ -16,6 +16,6 @@
   sudo: yes
 
 - name: Add SSH public key to user 'deploy'
-  authorized_key: user=deploy key="{{ user_deploy_pubkey | mandatory }}"
-  when: user_dynatrace_pubkey is defined
+  authorized_key: user=deploy key="{{ user_deploy_pubkey }}"
+  when: user_deploy_pubkey is defined
   sudo: yes

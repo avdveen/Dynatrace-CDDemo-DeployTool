@@ -12,5 +12,3 @@
 
 - include: disable-dns-lookup-for-ssh-connections.yml
 - include: disable-mod-pcspkr.yml
-- include: disable-password-based-logins-via-ssh.yml
-- include: disable-login-by-user-root.yml

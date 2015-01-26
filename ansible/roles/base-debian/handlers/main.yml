@@ -1,8 +1,4 @@
 ---
-- name: reload sshd
-  service: name=ssh state=reloaded
-  sudo: yes
-
 - name: update grub
   shell: update-grub
   sudo: yes

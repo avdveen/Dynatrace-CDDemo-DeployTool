@@ -70,3 +70,23 @@
   ignore_errors: yes
   sudo: yes
   when: remove_ansible_playbook is defined and remove_ansible_playbook
+
+- name: Disable login for user 'root'
+  shell: passwd -l root
+  sudo: yes
+
+- name: Disable SSH login for user 'root'
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^\#?PermitRootLogin.*' line='PermitRootLogin without-password' state=present
+  sudo: yes
+  notify: reload sshd
+
+- name: Enable SSH public key authentication
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^\#?PubkeyAuthentication.*' line='PubkeyAuthentication yes' state=present
+  notify: reload sshd
+  sudo: yes
+
+- name: Disable password authentication via SSH
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^\#?PasswordAuthentication.*' line='PasswordAuthentication no' state=present
+  when: disable_password_authentication | bool
+  notify: reload sshd
+  sudo: yes
