@@ -1,6 +1,6 @@
 # Deployment Tool for the "Continuous Delivery with Dynatrace Demo Environment" 
 
-This framework automates the provisioning of demo environments that show the capabilities around Continuous Delivery and DevOps with Dynatrace.
+This framework automates the provisioning of demo environments that show the capabilities around Continuous Delivery and DevOps with [Dynatrace](http://bit.ly/dttrial).
 
 The framework is based on [Packer](https://packer.io/), [Vagrant](https://www.vagrantup.com/) and [Ansible](http://www.ansible.com/) and runs on Linux and Windows.
 
