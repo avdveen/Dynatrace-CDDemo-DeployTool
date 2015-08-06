@@ -23,7 +23,7 @@
         "/mnt/isomount/VBoxLinuxAdditions.run",
         "umount /mnt/isomount && rm -rf /mnt/isomount"
       ],
-      "only": ["Debian-7-amd64-vbox"]
+      "only": ["Dynatrace-CDDemo-VBox"]
     },
     {
       "type": "shell",
@@ -32,7 +32,7 @@
         "echo 'deploy ALL=NOPASSWD:ALL' > /etc/sudoers.d/deploy"
       ],
       "override": {
-        "Debian-7-amd64-amazon-ebs": {
+        "Dynatrace-CDDemo-AWS": {
           "execute_command": "sudo -E sh '{{ .Path }}'",
           "inline": [
             "adduser --disabled-password --gecos 'deployment User' deploy",
@@ -83,9 +83,9 @@
   ], 
   "builders": [
     {
-      "name": "Debian-7-amd64-vbox",
-      "vm_name": "Debian-7-amd64",
-      "output_directory": "output/Debian-7-amd64-vbox",
+      "name": "Dynatrace-CDDemo-VBox",
+      "vm_name": "Dynatrace-CDDemo",
+      "output_directory": "output/Dynatrace-CDDemo-VBox",
       "type": "virtualbox-iso",
       "boot_command": [
         "<esc><wait>",
@@ -109,9 +109,9 @@
       "guest_os_type": "Debian_64",
       "http_directory": "http",
       "http_port_min": 8090,
-      "iso_checksum": "a91fba5001cf0fbccb44a7ae38c63b6e",
+      "iso_checksum": "1a311f9afb68d6365211b13b4342c40b",
       "iso_checksum_type": "md5",
-      "iso_url": "http://cdimage.debian.org/debian-cd/7.8.0/amd64/iso-cd/debian-7.8.0-amd64-netinst.iso",
+      "iso_url": "http://cdimage.debian.org/debian-cd/8.1.0/amd64/iso-cd/debian-8.1.0-amd64-netinst.iso",
       "ssh_username": "deploy",
       "ssh_password": "deploy",
       "ssh_port": 22,
@@ -125,9 +125,9 @@
       ]
     },
     {
-      "name": "Debian-7-amd64-vmware",
-      "vm_name": "Debian-7-amd64",
-      "output_directory": "output/Debian-7-amd64-vmware",
+      "name": "Dynatrace-CDDemo-VMware",
+      "vm_name": "Dynatrace-CDDemo",
+      "output_directory": "output/Dynatrace-CDDemo-VMware",
       "type": "vmware-iso",
       "boot_command": [
         "<esc><wait>",
@@ -152,9 +152,9 @@
       "guest_os_type": "debian5-64",
       "http_directory": "http",
       "http_port_min": 8090,
-      "iso_checksum": "a91fba5001cf0fbccb44a7ae38c63b6e",
+      "iso_checksum": "1a311f9afb68d6365211b13b4342c40b",
       "iso_checksum_type": "md5",
-      "iso_url": "http://cdimage.debian.org/debian-cd/7.8.0/amd64/iso-cd/debian-7.8.0-amd64-netinst.iso",
+      "iso_url": "http://cdimage.debian.org/debian-cd/8.1.0/amd64/iso-cd/debian-8.1.0-amd64-netinst.iso",
       "ssh_username": "deploy",
       "ssh_password": "deploy",
       "ssh_port": 22,
@@ -165,7 +165,7 @@
       }
     },
     {
-      "name": "Debian-7-amd64-amazon-ebs",
+      "name": "Dynatrace-CDDemo-AWS",
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
@@ -174,7 +174,7 @@
       "instance_type": "{{user `aws_instance_type`}}",
       "ssh_username": "{{user `aws_ssh_username`}}",
       "ami_name": "{{user `aws_ami_name`}}",
-      "ami_description": "Debian 7 (amd64)"
+      "ami_description": "Dynatrace CDDemo"
     }
   ],
   "post-processors": [

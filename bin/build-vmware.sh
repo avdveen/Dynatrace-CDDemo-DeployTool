@@ -7,4 +7,4 @@ if [ "$1" != "" ]; then
 fi
 
 . ./settings/vm-settings.sh
-packer build -only=Debian-7-amd64-vmware -var "ansible_role=$ANSIBLE_ROLE disable_password_authentication=no" packer.json
+packer build -only=Dynatrace-CDDemo-VMware -var "ansible_role=$ANSIBLE_ROLE disable_password_authentication=no" packer.json
