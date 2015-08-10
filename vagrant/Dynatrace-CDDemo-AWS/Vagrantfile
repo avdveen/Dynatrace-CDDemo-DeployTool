@@ -5,7 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "Debian-7-amd64-amazon-ebs"
+  config.vm.box = "Dynatrace-CDDemo-AWS"
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.ssh.username = "deploy"
